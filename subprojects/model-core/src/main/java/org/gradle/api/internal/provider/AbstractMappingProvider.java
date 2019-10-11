@@ -16,6 +16,8 @@
 
 package org.gradle.api.internal.provider;
 
+import org.gradle.api.Action;
+import org.gradle.api.Task;
 import org.gradle.api.internal.tasks.TaskDependencyResolveContext;
 
 import javax.annotation.Nullable;
@@ -41,13 +43,12 @@ public abstract class AbstractMappingProvider<OUT, IN> extends AbstractMinimalPr
 
     @Override
     public boolean isValueProducedByTask() {
-        // Need the content in order to transform the value
-        return provider.isContentProducedByTask();
+        return provider.isValueProducedByTask();
     }
 
     @Override
-    public boolean isContentProducedByTask() {
-        return provider.isContentProducedByTask();
+    public void visitProducerTasks(Action<? super Task> visitor) {
+        provider.visitProducerTasks(visitor);
     }
 
     @Override
