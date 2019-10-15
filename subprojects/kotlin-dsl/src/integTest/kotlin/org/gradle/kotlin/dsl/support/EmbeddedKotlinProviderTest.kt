@@ -97,4 +97,26 @@ class EmbeddedKotlinProviderTest : AbstractKotlinIntegrationTest() {
             containsString("because of the following reason: Pinned to the embedded Kotlin")
         )
     }
+
+    @Test
+    fun `embedded kotlin is compatible with locking because it properly reflects the dependency tree`() {
+        withBuildScript("""
+            ${scriptWithKotlinDslPlugin()}
+
+            dependencyLocking {
+                lockAllConfigurations()
+            }
+        """)
+
+        withFile("src/main/kotlin/test/Test.kt", """
+
+            package test
+
+            val test = true
+
+        """)
+        build("dependencies", "--configuration", "compileClasspath", "--write-locks")
+
+        build("compileKotlin")
+    }
 }

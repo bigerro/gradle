@@ -16,6 +16,7 @@
 
 package org.gradle.api.publish.maven.internal.publisher;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
@@ -52,6 +53,7 @@ import static org.apache.maven.artifact.ArtifactUtils.isSnapshot;
 
 abstract class AbstractMavenPublisher implements MavenPublisher {
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenPublisher.class);
+    private static final Set<String> JAR_PACKAGINGS = ImmutableSet.of("jar", "ejb", "bundle", "maven-plugin", "eclipse-plugin");
 
     private static final String POM_FILE_ENCODING = "UTF-8";
     private final Factory<File> temporaryDirFactory;
