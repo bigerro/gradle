@@ -873,6 +873,59 @@ class SomeTask extends DefaultTask {
         succeeds("after")
     }
 
+    def "can query mapped task output file location property at any time"() {
+        taskTypeWithOutputFileProperty()
+        buildFile << """
+            task producer(type: FileProducer) {
+                output = layout.buildDir.file("text.out")
+            }
+            def prop = producer.output.locationOnly.map { it.asFile.name }
+            println("prop = " + prop.get())
+            task after {
+                dependsOn(producer)
+                doLast {
+                    println("prop = " + prop.get())
+                }
+            }
+            task before {
+                doLast {
+                    println("prop = " + prop.get())
+                }
+            }
+            producer.dependsOn(before)
+        """
+
+        expect:
+        succeeds("after")
+    }
+
+    def "can query mapped task output directory location property at any time"() {
+        taskTypeWithOutputDirectoryProperty()
+        buildFile << """
+            task producer(type: DirProducer) {
+                output = layout.buildDir.dir("dir.out")
+                names = ["a", "b"]
+            }
+            def prop = producer.output.locationOnly.map { it.asFile.name }
+            println("prop = " + prop.get())
+            task after {
+                dependsOn(producer)
+                doLast {
+                    println("prop = " + prop.get())
+                }
+            }
+            task before {
+                doLast {
+                    println("prop = " + prop.get())
+                }
+            }
+            producer.dependsOn(before)
+        """
+
+        expect:
+        succeeds("after")
+    }
+
     def "querying the value of a mapped task output file property before the task has started is deprecated"() {
         taskTypeWithOutputFileProperty()
         buildFile << """

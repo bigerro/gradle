@@ -1314,10 +1314,25 @@ abstract class PropertySpec<T> extends ProviderSpec<T> {
         !property.valueProducedByTask
     }
 
-    def "mapped value has value producer when producer task attached"() {
+    def "mapped value has value producer when producer task attached to original property"() {
         def task = Mock(Task)
         def property = propertyWithDefaultValue()
         def mapped = property.map { it }
+
+        expect:
+        assertContentIsNotProducedByTask(mapped)
+        !mapped.valueProducedByTask
+
+        property.attachProducer(task)
+
+        assertContentIsProducedByTask(mapped, task)
+        mapped.valueProducedByTask
+    }
+
+    def "chain of mapped value has value producer when producer task attached to original property"() {
+        def task = Mock(Task)
+        def property = propertyWithDefaultValue()
+        def mapped = property.map { it }.map { it }.map { it }
 
         expect:
         assertContentIsNotProducedByTask(mapped)
